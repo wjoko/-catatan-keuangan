@@ -231,6 +231,7 @@ body {
 .inout-inp.in:focus  { border-color: var(--in);  background: var(--surface); }
 .inout-inp.out:focus { border-color: var(--out); background: var(--surface); }
 .inout-inp::placeholder { color: var(--muted); }
+.inout-inp:disabled { opacity: .35; cursor: not-allowed; background: var(--bg2); }
 
 /* Save button */
 .btn-save {
@@ -457,7 +458,7 @@ body {
     </div>
     <div class="frow">
       <label class="flbl" for="inpKategori">Kategori</label>
-      <select class="fsel" id="inpKategori"></select>
+      <select class="fsel" id="inpKategori" onchange="cekKategori()"></select>
     </div>
     <div class="frow">
       <label class="flbl">In / Out — isi salah satu</label>
@@ -553,6 +554,22 @@ function gantiTab(tab) {
 function isiKategori() {
   const sel = document.getElementById('inpKategori');
   sel.innerHTML = KAT[tabAktif].map(k=>`<option value="${k}">${k}</option>`).join('');
+  cekKategori();
+}
+
+function cekKategori() {
+  const kat    = document.getElementById('inpKategori').value;
+  const inpIn  = document.getElementById('inpIn');
+  const inpOut = document.getElementById('inpOut');
+  if (kat === 'Income') {
+    inpOut.disabled = true;
+    inpOut.value    = '';
+    inpIn.disabled  = false;
+    inpIn.focus();
+  } else {
+    inpOut.disabled = false;
+    inpIn.disabled  = false;
+  }
 }
 
 function isiDropdown(id) {
