@@ -557,19 +557,23 @@ function isiKategori() {
   cekKategori(false);
 }
 
-function cekKategori() {
-  const kat    = document.getElementById('inpKategori').value;
-  const inpIn  = document.getElementById('inpIn');
-  const inpOut = document.getElementById('inpOut');
-  if (kat === 'Income') {
-    inpOut.disabled = true;
-    inpOut.value    = '';
-    inpIn.disabled  = false;
-    inpIn.focus();
-  } else {
-    inpOut.disabled = false;
-    inpIn.disabled  = false;
-  }
+function cekKategori(autoFokus = true) {
+  const kat      = document.getElementById('inpKategori').value;
+  const inpIn    = document.getElementById('inpIn');
+  const inpOut   = document.getElementById('inpOut');
+  const isIncome = kat === 'Income';
+
+  inpOut.disabled      = isIncome;
+  inpOut.style.opacity = isIncome ? '0.35' : '1';
+  inpOut.style.cursor  = isIncome ? 'not-allowed' : '';
+  if (isIncome) inpOut.value = '';
+
+  inpIn.disabled      = !isIncome;
+  inpIn.style.opacity = !isIncome ? '0.35' : '1';
+  inpIn.style.cursor  = !isIncome ? 'not-allowed' : '';
+  if (!isIncome) inpIn.value = '';
+
+  if (autoFokus) setTimeout(() => { isIncome ? inpIn.focus() : inpOut.focus(); }, 50);
 }
 
 function isiDropdown(id) {
