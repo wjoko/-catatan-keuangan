@@ -554,7 +554,7 @@ function gantiTab(tab) {
 function isiKategori() {
   const sel = document.getElementById('inpKategori');
   sel.innerHTML = KAT[tabAktif].map(k=>`<option value="${k}">${k}</option>`).join('');
-  cekKategori();
+  cekKategori(false);
 }
 
 function cekKategori() {
