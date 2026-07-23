@@ -435,13 +435,9 @@ body {
       <div class="alltime-lbl">Total Pengeluaran</div>
       <div class="alltime-val out" id="atOut">—</div>
     </div>
-    <div class="alltime-pill">
-      <div class="alltime-lbl">Total Saldo Akhir</div>
-      <div class="alltime-val sage" id="atSaldo">—</div>
-    </div>
   </div>
   <div class="saldo-card bisnis" id="saldoCard">
-    <div class="saldo-eyebrow" id="saldoEyebrow">TOTAL UANG BISNIS</div>
+    <div class="saldo-eyebrow" id="saldoEyebrow">TOTAL SALDO AKHIR</div>
     <div class="saldo-amount"  id="saldoAmt">—</div>
   </div>
   <div class="bulanini-mini" id="bulanIniMini">
@@ -529,7 +525,7 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('inpTanggal').value = hariIni();
   isiKategori();
   // Set eyebrow & label bulan ini awal
-  document.getElementById('saldoEyebrow').textContent = 'TOTAL UANG BISNIS';
+  document.getElementById('saldoEyebrow').textContent = 'TOTAL SALDO AKHIR';
   const _now = new Date();
   const _bln = _now.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
   document.getElementById('bulanIniLbl').textContent = 'Bulan Ini (' + _bln + ')';
@@ -559,7 +555,7 @@ function gantiTab(tab) {
   document.getElementById('swBisnis').classList.toggle('active',  tab==='Bisnis');
   document.getElementById('swPribadi').classList.toggle('active', tab==='Pribadi');
   document.getElementById('saldoCard').className = 'saldo-card ' + tab.toLowerCase();
-  document.getElementById('saldoEyebrow').textContent = 'TOTAL UANG ' + tab.toUpperCase();
+  document.getElementById('saldoEyebrow').textContent = 'TOTAL SALDO AKHIR';
   document.getElementById('btnSave').className = 'btn-save' + (tab==='Pribadi' ? ' pribadi' : '');
   isiKategori();
   muatSaldo();
@@ -631,7 +627,6 @@ async function muatSaldo() {
     document.getElementById('saldoAmt').textContent = rp(tabAktif==='Bisnis' ? atB.saldo : atP.saldo);
     document.getElementById('atIn').textContent    = rp(atB.totalIn  + atP.totalIn);
     document.getElementById('atOut').textContent   = rp(atB.totalOut + atP.totalOut);
-    document.getElementById('atSaldo').textContent = rp(atB.saldo    + atP.saldo);
   } catch(e) {}
 }
 
