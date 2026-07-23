@@ -149,8 +149,20 @@ body {
 .alltime-val.in  { color: var(--in); }
 .alltime-val.out { color: var(--out); }
 .alltime-val.sage { color: var(--sage); }
+
+.bulanini-mini {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 8px; padding: 8px 4px 0;
+}
+.bulanini-lbl { font-size: 11px; color: var(--muted); font-weight: 600; }
+.bulanini-pills { display: flex; gap: 12px; }
+.bulanini-pill { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); font-weight: 600; }
+.bulanini-pill b { font-family: 'DM Mono', monospace; color: var(--text); font-weight: 700; }
+.bulanini-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.bulanini-dot.in  { background: var(--in); }
+.bulanini-dot.out { background: var(--out); }
 .saldo-card {
-  border-radius: var(--r2); padding: 12px 16px;
+  border-radius: var(--r2); padding: 18px 18px;
   position: relative; overflow: hidden;
   box-shadow: var(--shadow2);
 }
@@ -173,7 +185,7 @@ body {
   background: rgba(255,255,255,0.04);
 }
 .saldo-eyebrow { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.6); }
-.saldo-amount  { font-size: clamp(18px, 5vw, 24px); font-weight: 700; margin: 3px 0 10px; letter-spacing: -1px; font-family: 'DM Mono', monospace; color: #fff; }
+.saldo-amount  { font-size: clamp(26px, 7.5vw, 34px); font-weight: 700; margin: 4px 0 0; letter-spacing: -1px; font-family: 'DM Mono', monospace; color: #fff; }
 .saldo-pills   { display: flex; gap: 8px; }
 .saldo-pill    { flex: 1; background: rgba(0,0,0,0.15); border-radius: 8px; padding: 7px 10px; }
 .saldo-pill-lbl { font-size: 10px; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; }
@@ -429,16 +441,19 @@ body {
     </div>
   </div>
   <div class="saldo-card bisnis" id="saldoCard">
-    <div class="saldo-eyebrow" id="saldoEyebrow">BISNIS — BULAN INI</div>
+    <div class="saldo-eyebrow" id="saldoEyebrow">TOTAL UANG BISNIS</div>
     <div class="saldo-amount"  id="saldoAmt">—</div>
-    <div class="saldo-pills">
-      <div class="saldo-pill">
-        <div class="saldo-pill-lbl">Pemasukan</div>
-        <div class="saldo-pill-val" id="saldoIn">—</div>
+  </div>
+  <div class="bulanini-mini" id="bulanIniMini">
+    <div class="bulanini-lbl" id="bulanIniLbl">Bulan Ini (Maret 2026)</div>
+    <div class="bulanini-pills">
+      <div class="bulanini-pill">
+        <span class="bulanini-dot in"></span>
+        <span class="bulanini-txt">In <b id="saldoIn">—</b></span>
       </div>
-      <div class="saldo-pill">
-        <div class="saldo-pill-lbl">Pengeluaran</div>
-        <div class="saldo-pill-val" id="saldoOut">—</div>
+      <div class="bulanini-pill">
+        <span class="bulanini-dot out"></span>
+        <span class="bulanini-txt">Out <b id="saldoOut">—</b></span>
       </div>
     </div>
   </div>
@@ -513,10 +528,11 @@ window.addEventListener('DOMContentLoaded', () => {
   isiDropdown('bulanRekap');
   document.getElementById('inpTanggal').value = hariIni();
   isiKategori();
-  // Set eyebrow awal
+  // Set eyebrow & label bulan ini awal
+  document.getElementById('saldoEyebrow').textContent = 'TOTAL UANG BISNIS';
   const _now = new Date();
-  const _bln = _now.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }).toUpperCase();
-  document.getElementById('saldoEyebrow').textContent = 'BISNIS — BULAN INI (' + _bln + ')';
+  const _bln = _now.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+  document.getElementById('bulanIniLbl').textContent = 'Bulan Ini (' + _bln + ')';
   if (!scriptUrl) bukaSetup();
   else muatSaldo();
 });
@@ -543,9 +559,7 @@ function gantiTab(tab) {
   document.getElementById('swBisnis').classList.toggle('active',  tab==='Bisnis');
   document.getElementById('swPribadi').classList.toggle('active', tab==='Pribadi');
   document.getElementById('saldoCard').className = 'saldo-card ' + tab.toLowerCase();
-  const now = new Date();
-  const namaBulan = now.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }).toUpperCase();
-  document.getElementById('saldoEyebrow').textContent = tab.toUpperCase() + ' — BULAN INI (' + namaBulan + ')';
+  document.getElementById('saldoEyebrow').textContent = 'TOTAL UANG ' + tab.toUpperCase();
   document.getElementById('btnSave').className = 'btn-save' + (tab==='Pribadi' ? ' pribadi' : '');
   isiKategori();
   muatSaldo();
@@ -609,11 +623,12 @@ async function muatSaldo() {
     const j = await r.json();
     if (j.status!=='ok') return;
     const d = j[tabAktif.toLowerCase()];
-    document.getElementById('saldoAmt').textContent  = rp(d.saldo);
     document.getElementById('saldoIn').textContent   = rp(d.totalIn);
     document.getElementById('saldoOut').textContent  = rp(d.totalOut);
     // All time
     const atB = j.allTime.bisnis, atP = j.allTime.pribadi;
+    // Hero amount = total uang (all-time saldo) untuk tab aktif
+    document.getElementById('saldoAmt').textContent = rp(tabAktif==='Bisnis' ? atB.saldo : atP.saldo);
     document.getElementById('atIn').textContent    = rp(atB.totalIn  + atP.totalIn);
     document.getElementById('atOut').textContent   = rp(atB.totalOut + atP.totalOut);
     document.getElementById('atSaldo').textContent = rp(atB.saldo    + atP.saldo);
