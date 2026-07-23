@@ -623,8 +623,8 @@ async function muatSaldo() {
     document.getElementById('saldoOut').textContent  = rp(d.totalOut);
     // All time
     const atB = j.allTime.bisnis, atP = j.allTime.pribadi;
-    // Hero amount = total uang (all-time saldo) untuk tab aktif
-    document.getElementById('saldoAmt').textContent = rp(tabAktif==='Bisnis' ? atB.saldo : atP.saldo);
+    // Hero amount = total saldo akhir gabungan (Bisnis + Pribadi)
+    document.getElementById('saldoAmt').textContent = rp(atB.saldo + atP.saldo);
     document.getElementById('atIn').textContent    = rp(atB.totalIn  + atP.totalIn);
     document.getElementById('atOut').textContent   = rp(atB.totalOut + atP.totalOut);
   } catch(e) {}
